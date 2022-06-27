@@ -359,16 +359,18 @@ pub fn ripemd160_array(value: &[u8]) -> [u8; 20] {
     }
 }
 
-pub fn sha3_512(value_len: u64, value_ptr: u64, register_id: u64) -> [u8; 64] {
+/// Hashes the bytes using the SHA3 513 hash function. This returns a 64 byte hash.
+pub fn sha3_512(value: &[u8]) -> [u8; 64] {
     unsafe {
-        sys::sha3_512(value_len, value_ptr, register_id);
+        sys::sha3_512(value.len() as _, value.as_ptr() as _, ATOMIC_OP_REGISTER);
         read_register_fixed_64(ATOMIC_OP_REGISTER)
     }
 }
 
-pub fn blake2_256(value_len: u64, value_ptr: u64, register_id: u64) -> [u8; 32] {
+/// Hashes the bytes using the BLAKE2 256 hash function. This returns a 32 byte hash.
+pub fn blake2_256(value: &[u8]) -> [u8; 32] {
     unsafe {
-        sys::blake2_256(value_len, value_ptr, register_id);
+        sys::blake2_256(value.len() as _, value.as_ptr() as _, ATOMIC_OP_REGISTER);
         read_register_fixed_32(ATOMIC_OP_REGISTER)
     }
 }
@@ -989,6 +991,16 @@ mod tests {
         assert_eq!(
             &super::ripemd160_array(b"some value"),
             base64::decode("CfAl/tcE4eysj4iyvaPlaHbaA6w=").unwrap().as_slice()
+        );
+
+        assert_eq!(
+            &super::blake2_256(b"tesdsst"),
+            base64::decode("iqntBaI0PPZHgsprdwSzJMYs5oCeTVNmmtlJq9eyG7A=").unwrap().as_slice()
+        );
+
+        assert_eq!(
+            &super::sha3_512(b"tesdsst"),
+            base64::decode("hcQwHsvuwp669nbuKp7UG7JIWuVibMPd3qFg2/xjAjDgD1/cI9Eb+iuo+goVGWGH6z0FjrZVJLMXfqEOFXa05w==").unwrap().as_slice()
         );
     }
 
