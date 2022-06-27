@@ -359,6 +359,21 @@ pub fn ripemd160_array(value: &[u8]) -> [u8; 20] {
     }
 }
 
+pub fn sha3_512(value_len: u64, value_ptr: u64, register_id: u64) -> [u8; 64] {
+    unsafe {
+        sys::sha3_512(value_len, value_ptr, register_id);
+        read_register_fixed_64(ATOMIC_OP_REGISTER)
+    }
+}
+
+pub fn blake2_256(value_len: u64, value_ptr: u64, register_id: u64) -> [u8; 32] {
+    unsafe {
+        sys::blake2_256(value_len, value_ptr, register_id);
+        read_register_fixed_32(ATOMIC_OP_REGISTER)
+    }
+}
+
+/// Verifies an ED25519 signature
 pub fn ed25519_verify(signature: &[u8], msg: &[u8], pub_key: &[u8]) -> bool {
     //* SAFETY: TODO
     //*

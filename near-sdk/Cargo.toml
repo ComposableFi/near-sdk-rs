@@ -32,10 +32,10 @@ wee_alloc = { version = "0.4.5", default-features = false, optional = true }
 once_cell = { version = "1.8", optional = true, default-features = false }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-near-vm-logic = { git = "https://github.com/ComposableFi/nearcore.git", rev = "af0a3a5a7a88d131441d506763f99d8f53545bd4" }
-near-primitives-core = { git = "https://github.com/ComposableFi/nearcore.git", rev = "af0a3a5a7a88d131441d506763f99d8f53545bd4" }
-near-primitives = { git = "https://github.com/ComposableFi/nearcore.git", rev = "af0a3a5a7a88d131441d506763f99d8f53545bd4" }
-near-crypto = { git = "https://github.com/ComposableFi/nearcore.git", rev = "af0a3a5a7a88d131441d506763f99d8f53545bd4" }
+near-vm-logic = { git = "https://github.com/ComposableFi/nearcore.git", rev = "a36b0d645f89972030eb84f13a534c2c4d5d7780" }
+near-primitives-core = { git = "https://github.com/ComposableFi/nearcore.git", rev = "a36b0d645f89972030eb84f13a534c2c4d5d7780" }
+near-primitives = { git = "https://github.com/ComposableFi/nearcore.git", rev = "a36b0d645f89972030eb84f13a534c2c4d5d7780" }
+near-crypto = { git = "https://github.com/ComposableFi/nearcore.git", rev = "a36b0d645f89972030eb84f13a534c2c4d5d7780" }
 
 [dev-dependencies]
 rand = "0.8.4"

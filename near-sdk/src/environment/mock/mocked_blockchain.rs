@@ -277,6 +277,14 @@ mod mock_chain {
         with_mock_interface(|b| b.ripemd160(value_len, value_ptr, register_id))
     }
     #[no_mangle]
+    extern "C" fn sha3_512(value_len: u64, value_ptr: u64, register_id: u64) {
+        with_mock_interface(|b| b.sha3_512(value_len, value_ptr, register_id))
+    }
+    #[no_mangle]
+    extern "C" fn blake2_256(value_len: u64, value_ptr: u64, register_id: u64) {
+        with_mock_interface(|b| b.blake2_256(value_len, value_ptr, register_id))
+    }
+    #[no_mangle]
     extern "C" fn ed25519_verify(
         sig_len: u64,
         sig_ptr: u64,
