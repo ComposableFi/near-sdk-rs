@@ -33,9 +33,9 @@ once_cell = { version = "1.8", optional = true, default-features = false }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 near-vm-logic = { git = "https://github.com/ComposableFi/nearcore.git", rev = "af0a3a5a7a88d131441d506763f99d8f53545bd4" }
-near-primitives-core = "0.13"
-near-primitives = "0.13"
-near-crypto = "0.13"
+near-primitives-core = { git = "https://github.com/ComposableFi/nearcore.git", rev = "af0a3a5a7a88d131441d506763f99d8f53545bd4" }
+near-primitives = { git = "https://github.com/ComposableFi/nearcore.git", rev = "af0a3a5a7a88d131441d506763f99d8f53545bd4" }
+near-crypto = { git = "https://github.com/ComposableFi/nearcore.git", rev = "af0a3a5a7a88d131441d506763f99d8f53545bd4" }
 
 [dev-dependencies]
 rand = "0.8.4"
