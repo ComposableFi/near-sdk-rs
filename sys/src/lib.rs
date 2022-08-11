@@ -35,6 +35,8 @@ extern "C" {
     pub fn keccak256(value_len: u64, value_ptr: u64, register_id: u64);
     pub fn keccak512(value_len: u64, value_ptr: u64, register_id: u64);
     pub fn ripemd160(value_len: u64, value_ptr: u64, register_id: u64);
+    pub fn sha2_512(value_len: u64, value_ptr: u64, register_id: u64);
+    pub fn sha2_512_truncated(value_len: u64, value_ptr: u64, register_id: u64);
     pub fn sha3_512(value_len: u64, value_ptr: u64, register_id: u64);
     pub fn blake2_256(value_len: u64, value_ptr: u64, register_id: u64);
     pub fn ed25519_verify(
@@ -44,8 +46,7 @@ extern "C" {
         msg_ptr: u64,
         pub_key_len: u64,
         pub_key_ptr: u64,
-        register_id: u64,
-    );
+    ) -> u64;
     pub fn ecrecover(
         hash_len: u64,
         hash_ptr: u64,

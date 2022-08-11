@@ -277,6 +277,14 @@ mod mock_chain {
         with_mock_interface(|b| b.ripemd160(value_len, value_ptr, register_id))
     }
     #[no_mangle]
+    extern "C" fn sha2_512(value_len: u64, value_ptr: u64, register_id: u64) {
+        with_mock_interface(|b| b.sha2_512(value_len, value_ptr, register_id))
+    }
+    #[no_mangle]
+    extern "C" fn sha2_512_truncated(value_len: u64, value_ptr: u64, register_id: u64) {
+        with_mock_interface(|b| b.sha2_512(value_len, value_ptr, register_id))
+    }
+    #[no_mangle]
     extern "C" fn sha3_512(value_len: u64, value_ptr: u64, register_id: u64) {
         with_mock_interface(|b| b.sha3_512(value_len, value_ptr, register_id))
     }
@@ -292,18 +300,9 @@ mod mock_chain {
         msg_ptr: u64,
         pub_key_len: u64,
         pub_key_ptr: u64,
-        register_id: u64,
-    ) {
+    ) -> u64 {
         with_mock_interface(|b| {
-            b.ed25519_verify(
-                sig_len,
-                sig_ptr,
-                msg_len,
-                msg_ptr,
-                pub_key_len,
-                pub_key_ptr,
-                register_id,
-            )
+            b.ed25519_verify(sig_len, sig_ptr, msg_len, msg_ptr, pub_key_len, pub_key_ptr)
         })
     }
     #[no_mangle]
