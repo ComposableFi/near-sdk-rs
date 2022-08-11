@@ -359,6 +359,55 @@ pub fn ripemd160_array(value: &[u8]) -> [u8; 20] {
     }
 }
 
+/// Hashes the bytes using the SHA2 512 hash function. This returns a 64 byte hash.
+pub fn sha2_512(value: &[u8]) -> [u8; 64] {
+    unsafe {
+        sys::sha2_512(value.len() as _, value.as_ptr() as _, ATOMIC_OP_REGISTER);
+        read_register_fixed_64(ATOMIC_OP_REGISTER)
+    }
+}
+
+/// Hashes the bytes using the SHA2 512 hash function. This returns a 32 byte hash.
+pub fn sha2_512_truncated(value: &[u8]) -> [u8; 32] {
+    unsafe {
+        sys::sha2_512(value.len() as _, value.as_ptr() as _, ATOMIC_OP_REGISTER);
+        read_register_fixed_32(ATOMIC_OP_REGISTER)
+    }
+}
+
+/// Hashes the bytes using the SHA3 512 hash function. This returns a 64 byte hash.
+pub fn sha3_512(value: &[u8]) -> [u8; 64] {
+    unsafe {
+        sys::sha3_512(value.len() as _, value.as_ptr() as _, ATOMIC_OP_REGISTER);
+        read_register_fixed_64(ATOMIC_OP_REGISTER)
+    }
+}
+
+/// Hashes the bytes using the BLAKE2 256 hash function. This returns a 32 byte hash.
+pub fn blake2_256(value: &[u8]) -> [u8; 32] {
+    unsafe {
+        sys::blake2_256(value.len() as _, value.as_ptr() as _, ATOMIC_OP_REGISTER);
+        read_register_fixed_32(ATOMIC_OP_REGISTER)
+    }
+}
+
+/// Verifies an ED25519 signature
+pub fn ed25519_verify(signature: &[u8], msg: &[u8], pub_key: &[u8]) -> bool {
+    //* SAFETY: TODO
+    //*
+    //*
+    unsafe {
+        sys::ed25519_verify(
+            signature.len() as _,
+            signature.as_ptr() as _,
+            msg.len() as _,
+            msg.as_ptr() as _,
+            pub_key.len() as _,
+            pub_key.as_ptr() as _,
+        ) == 1
+    }
+}
+
 /// Recovers an ECDSA signer address from a 32-byte message `hash` and a corresponding `signature`
 /// along with `v` recovery byte.
 ///
@@ -956,6 +1005,16 @@ mod tests {
             &super::ripemd160_array(b"some value"),
             base64::decode("CfAl/tcE4eysj4iyvaPlaHbaA6w=").unwrap().as_slice()
         );
+
+        assert_eq!(
+            &super::blake2_256(b"tesdsst"),
+            base64::decode("iqntBaI0PPZHgsprdwSzJMYs5oCeTVNmmtlJq9eyG7A=").unwrap().as_slice()
+        );
+
+        assert_eq!(
+            &super::sha3_512(b"tesdsst"),
+            base64::decode("hcQwHsvuwp669nbuKp7UG7JIWuVibMPd3qFg2/xjAjDgD1/cI9Eb+iuo+goVGWGH6z0FjrZVJLMXfqEOFXa05w==").unwrap().as_slice()
+        );
     }
 
     #[cfg(not(target_arch = "wasm32"))]
@@ -1020,5 +1079,54 @@ mod tests {
             .signer_account_pk(key.clone())
             .build());
         assert_eq!(super::signer_account_pk(), key);
+    }
+
+    #[cfg(not(target_arch = "wasm32"))]
+    #[test]
+    fn signature_verification() {
+        let signature = hex::decode("91c1cb1272e30e7521d57942820e190424782e8ee2d707427a70611ef9873da5ddf9fc17692838461f98ec8d9a7acf144b764f5aa806dd7ad51d7ec4d868bf06").unwrap();
+        let public_key =
+            hex::decode("207A067892821E25D770F1FBA0C47C11FF4B813E54162ECE9EB839E076231AB6")
+                .unwrap();
+
+        // 32 bytes message
+        let message =
+            hex::decode("6B616A646C666B6A616C6B666A616B6C666A646B6C61646A666B6C6A6164736B")
+                .unwrap();
+        assert!(super::ed25519_verify(&signature, &message, &public_key));
+    }
+
+    #[cfg(not(target_arch = "wasm32"))]
+    #[test]
+    fn blake2_256() {
+        let expected_value: [u8; 32] =
+            hex::decode("4f303036dc58e3c7bf38d48293c6e0f0404e986be5bfe62eb4eae8e8d30dd828")
+                .unwrap()
+                .try_into()
+                .unwrap();
+        assert_eq!(super::blake2_256(b"hello, world"), expected_value);
+    }
+
+    #[cfg(not(target_arch = "wasm32"))]
+    #[test]
+    fn sha2_512() {
+        let expected_value: [u8; 64] =
+            hex::decode("8710339dcb6814d0d9d2290ef422285c9322b7163951f9a0ca8f883d3305286f44139aa374848e4174f5aada663027e4548637b6d19894aec4fb6c46a139fbf9")
+                .unwrap()
+                .try_into()
+                .unwrap();
+        assert_eq!(super::sha2_512(b"hello, world"), expected_value);
+        assert_eq!(super::sha2_512_truncated(b"hello, world"), expected_value[..32]);
+    }
+
+    #[cfg(not(target_arch = "wasm32"))]
+    #[test]
+    fn sha3_512() {
+        let expected_value: [u8; 64] =
+            hex::decode("2ed3a863a12e2f8ff140aa86232ff3603a7f24af62f0e2ca74672494ade175a9a3de42a351b5019d931a1deae0499609038d9b47268779d76198e1d410d20974")
+                .unwrap()
+                .try_into()
+                .unwrap();
+        assert_eq!(super::sha3_512(b"hello, world"), expected_value);
     }
 }
